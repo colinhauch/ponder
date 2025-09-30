@@ -16,7 +16,7 @@ This TODO list is organized by the implementation phases outlined in the project
 
 - [ ] **Design and implement database schema**
   - [x] Create `cards` table (id, name, mana_cost, type_line, oracle_text, colors, cmc, etc.)
-  - [ ] Create `collections` table (user_id, card_id, quantity, pool_name)
+  - [x] Create `collections` table (user_id, card_id, quantity, pool_name)
   - [ ] Create `decks` table (id, user_id, name, format, pool_id, created_at)
   - [ ] Create `deck_cards` table (deck_id, card_id, quantity, sideboard)
   - [ ] Create `card_pools` table (id, user_id, name, description, format)
