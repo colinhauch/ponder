@@ -80,6 +80,44 @@ export type Database = {
         }
         Relationships: []
       }
+      collections: {
+        Row: {
+          card_id: string
+          created_at: string
+          id: string
+          pool_name: string
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          id?: string
+          pool_name?: string
+          quantity?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          id?: string
+          pool_name?: string
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collections_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -88,7 +126,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      mtg_color: "W" | "U" | "B" | "R" | "G"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
