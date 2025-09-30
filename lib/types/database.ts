@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      card_pools: {
+        Row: {
+          card_count: number
+          created_at: string
+          description: string | null
+          format: string | null
+          id: string
+          is_active: boolean
+          is_public: boolean
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_count?: number
+          created_at?: string
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_count?: number
+          created_at?: string
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_active?: boolean
+          is_public?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           card_object_uri: string
@@ -79,6 +118,59 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      chat_sessions: {
+        Row: {
+          context_data: Json | null
+          created_at: string
+          deck_id: string | null
+          id: string
+          is_archived: boolean
+          message_count: number
+          messages: Json
+          name: string
+          pool_id: string | null
+          token_usage: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          context_data?: Json | null
+          created_at?: string
+          deck_id?: string | null
+          id?: string
+          is_archived?: boolean
+          message_count?: number
+          messages?: Json
+          name: string
+          pool_id?: string | null
+          token_usage?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          context_data?: Json | null
+          created_at?: string
+          deck_id?: string | null
+          id?: string
+          is_archived?: boolean
+          message_count?: number
+          messages?: Json
+          name?: string
+          pool_id?: string | null
+          token_usage?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_sessions_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "decks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       collections: {
         Row: {
