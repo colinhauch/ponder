@@ -46,9 +46,31 @@ The chosen hybrid approach stores approximately twenty essential fields locally 
 
 This architecture enables the application to perform sophisticated local queries for deck-building operations while maintaining access to the complete Scryfall ecosystem for detailed card information, pricing data, and rules clarifications. The approach scales efficiently as new cards are released since only essential fields require local storage while complete information remains accessible through the established API integration patterns.
 
+## Decks Table Structure
+
+The decks table implements comprehensive deck metadata management, enabling users to organize and track their constructed decks with full format support and sharing capabilities. Each deck entry represents a complete deck configuration including metadata such as name, description, target format, and relationships to card pools from which the deck was constructed. The table supports both private deck building and public deck sharing through configurable visibility settings.
+
+The format field uses enumerated values covering all major Magic formats from limited environments like draft and sealed to constructed formats including Standard, Modern, Legacy, and Commander. This format specification enables automatic deck validation against format-specific rules and card legalities. The pool_id field creates a flexible relationship to card pools, allowing decks to be associated with specific collections, draft pools, or theoretical card sets without requiring rigid foreign key constraints.
+
+Deck organization features include archival status for hiding completed or outdated decks while preserving their data for historical reference. The is_public flag enables deck sharing functionality where users can make their deck lists visible to other users while maintaining full ownership and edit permissions. Cached card counts for main deck and sideboard provide immediate access to deck composition metrics without requiring expensive joins to the deck_cards table.
+
+Row Level Security policies ensure strict access control where users can only view and modify their own decks, with additional policies allowing read access to decks marked as public. This security model supports both private deck development and community deck sharing while maintaining data isolation between users.
+
+## Deck Cards Table Implementation
+
+The deck_cards table provides the core storage mechanism for actual deck contents, implementing a many-to-many relationship between decks and cards with quantity tracking and sideboard organization. Each entry represents a specific card in a specific deck with precise quantity information and sideboard designation, enabling complete deck list reconstruction and validation.
+
+The unique constraint on deck_id, card_id, and is_sideboard allows the same card to appear in both the main deck and sideboard with different quantities, supporting strategic deck building patterns where cards move between main deck and sideboard based on matchup considerations. Quantity validation enforces typical Magic format rules limiting most cards to four copies per deck, though this constraint can accommodate format-specific variations.
+
+The sideboard tracking through the is_sideboard boolean field enables sophisticated deck management for competitive formats where sideboard composition is crucial for tournament success. This design supports limited formats where unused pool cards constitute the sideboard, as well as constructed formats with carefully curated sideboard selections.
+
+Database relationships include foreign keys to both the decks and cards tables with cascade deletion, ensuring referential integrity and automatic cleanup when decks or cards are removed from the system. Performance indexes support common deck building queries such as retrieving all cards in a deck, finding decks containing specific cards, and analyzing deck composition patterns.
+
+Row Level Security policies operate through deck ownership verification, where users can only access deck_cards entries for decks they own or decks marked as public. This indirect security model maintains the separation between public deck viewing and private deck modification while enabling comprehensive deck analysis features.
+
 ## Future Schema Development
 
-The current implementation establishes architectural patterns that will guide development of the remaining database tables outlined in the project specification. The collections table demonstrates the approach for user-specific data with Row Level Security policies, proper indexing strategies, and integration with the type generation system. Future tables including decks, deck_cards, card_pools, and chat_sessions will follow these established patterns while extending the schema to support additional application features.
+The current implementation establishes architectural patterns that will guide development of the remaining database tables outlined in the project specification. The collections, decks, and deck_cards tables demonstrate the approach for user-specific data with Row Level Security policies, proper indexing strategies, and integration with the type generation system. Future tables including card_pools and chat_sessions will follow these established patterns while extending the schema to support additional application features.
 
 The versioned migration system provides a foundation for iterative schema development while maintaining system stability across development phases. As new features require additional database tables or modifications to existing structures, the established workflow of creating timestamped migrations, applying them through `supabase db push`, and regenerating TypeScript types ensures that schema evolution remains controlled and predictable.
 
