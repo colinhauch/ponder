@@ -118,6 +118,51 @@ export type Database = {
           },
         ]
       }
+      decks: {
+        Row: {
+          created_at: string
+          description: string | null
+          format: string | null
+          id: string
+          is_archived: boolean
+          is_public: boolean
+          main_deck_count: number
+          name: string
+          pool_id: string | null
+          sideboard_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_archived?: boolean
+          is_public?: boolean
+          main_deck_count?: number
+          name: string
+          pool_id?: string | null
+          sideboard_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          format?: string | null
+          id?: string
+          is_archived?: boolean
+          is_public?: boolean
+          main_deck_count?: number
+          name?: string
+          pool_id?: string | null
+          sideboard_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
