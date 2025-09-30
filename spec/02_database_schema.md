@@ -68,9 +68,21 @@ Database relationships include foreign keys to both the decks and cards tables w
 
 Row Level Security policies operate through deck ownership verification, where users can only access deck_cards entries for decks they own or decks marked as public. This indirect security model maintains the separation between public deck viewing and private deck modification while enabling comprehensive deck analysis features.
 
+## Card Pools Table Organization
+
+The card_pools table provides structured organization for card collections through named pools with format specifications and sharing capabilities. Each pool represents a defined set of cards available for deck building, from complete collections to event-specific limited pools like draft environments. The format field enables automatic validation and pool filtering based on Magic format requirements.
+
+Pool management features include public sharing for collaborative deck building and activity status for archiving completed events while preserving historical data. The cached card_count field provides immediate pool size information without expensive aggregation queries, supporting responsive UI updates during pool management operations.
+
+## Chat Sessions Table Implementation
+
+The chat_sessions table manages AI conversation persistence with comprehensive context preservation and cost tracking. Message history storage in JSONB format enables complex querying while maintaining conversation continuity across sessions. Context data includes deck snapshots, pool references, and user preferences to provide AI with complete situational awareness.
+
+Token usage tracking supports cost management and user quota enforcement while message count caching enables performance optimizations in conversation listing and pagination. Session archival maintains conversation history without cluttering active workspace interfaces.
+
 ## Future Schema Development
 
-The current implementation establishes architectural patterns that will guide development of the remaining database tables outlined in the project specification. The collections, decks, and deck_cards tables demonstrate the approach for user-specific data with Row Level Security policies, proper indexing strategies, and integration with the type generation system. Future tables including card_pools and chat_sessions will follow these established patterns while extending the schema to support additional application features.
+The database schema foundation is now complete with all core tables implemented following consistent architectural patterns. Card data storage provides the foundation, user collections enable inventory management, deck storage supports construction workflows, pool organization enables flexible card grouping, and chat persistence supports AI-assisted deck building conversations.
 
 The versioned migration system provides a foundation for iterative schema development while maintaining system stability across development phases. As new features require additional database tables or modifications to existing structures, the established workflow of creating timestamped migrations, applying them through `supabase db push`, and regenerating TypeScript types ensures that schema evolution remains controlled and predictable.
 
