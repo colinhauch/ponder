@@ -18,7 +18,7 @@ This TODO list is organized by the implementation phases outlined in the project
   - [x] Create `cards` table (id, name, mana_cost, type_line, oracle_text, colors, cmc, etc.)
   - [x] Create `collections` table (user_id, card_id, quantity, pool_name)
   - [x] Create `decks` table (deck_id, user_id, name, format, pool_id, created_at, etc.)
-  - [ ] Create `deck_cards` table (deck_id, card_id, quantity, sideboard)
+  - [x] Create `deck_cards` table (deck_id, card_id, quantity, sideboard)
   - [ ] Create `card_pools` table (id, user_id, name, description, format)
   - [ ] Create `chat_sessions` table (id, user_id, deck_id, messages, created_at)
   - [ ] Set up Row Level Security (RLS) policies

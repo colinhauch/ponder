@@ -118,6 +118,51 @@ export type Database = {
           },
         ]
       }
+      deck_cards: {
+        Row: {
+          card_id: string
+          created_at: string
+          deck_id: string
+          id: string
+          is_sideboard: boolean
+          quantity: number
+          updated_at: string
+        }
+        Insert: {
+          card_id: string
+          created_at?: string
+          deck_id: string
+          id?: string
+          is_sideboard?: boolean
+          quantity?: number
+          updated_at?: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          deck_id?: string
+          id?: string
+          is_sideboard?: boolean
+          quantity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deck_cards_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deck_cards_deck_id_fkey"
+            columns: ["deck_id"]
+            isOneToOne: false
+            referencedRelation: "decks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       decks: {
         Row: {
           created_at: string
