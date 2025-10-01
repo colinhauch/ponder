@@ -23,6 +23,7 @@ This TODO list is organized by the implementation phases outlined in the project
   - [x] Create `chat_sessions` table (id, user_id, deck_id, messages, created_at)
   - [x] Set up Row Level Security (RLS) policies
   - [x] Create database indexes for performance
+  - [ ] Add MTG color enums to database schema
 
 ### Authentication Setup
 - [x] **Implement user authentication with Supabase Auth**
@@ -36,12 +37,12 @@ This TODO list is organized by the implementation phases outlined in the project
   - [ ] Test OAuth authentication flows
 
 ### Basic Card Data Import
-- [ ] **Scryfall API integration**
-  - [ ] Create Scryfall service in `/lib/services/scryfall.ts`
-  - [ ] Implement card search and retrieval functions
-  - [ ] Create data transformation utilities
-  - [ ] Import cards from recent limited sets (start with 1-2 sets)
-  - [ ] Set up caching strategy for card data
+- [x] **Scryfall API integration**
+  - [x] Create Scryfall service in `/lib/services/scryfall.ts`
+  - [x] Implement card search and retrieval functions
+  - [x] Create data transformation utilities
+  - [x] Import cards from recent limited sets (start with 1-2 sets)
+  - [x] Set up caching strategy for card data
 
 ### Three-Pane Layout Foundation
 - [ ] **Create basic layout structure**
