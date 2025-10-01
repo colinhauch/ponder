@@ -1,0 +1,2 @@
+# Local data exports - don't commit large JSON files
+*.json
