@@ -25,11 +25,15 @@ This TODO list is organized by the implementation phases outlined in the project
   - [x] Create database indexes for performance
 
 ### Authentication Setup
-- [ ] **Implement user authentication with Supabase Auth**
-  - [ ] Configure auth providers (email/password minimum)
-  - [ ] Update auth components in `/components/`
-  - [ ] Test authentication flow
-  - [ ] Set up protected routes middleware
+- [x] **Implement user authentication with Supabase Auth**
+  - [x] Configure auth providers (email/password minimum)
+  - [x] Update auth components in `/components/`
+  - [x] Test authentication flow
+  - [x] Set up protected routes middleware
+  - [ ] Add OAuth providers (Google, GitHub, Discord)
+  - [ ] Configure OAuth in Supabase dashboard
+  - [ ] Update auth components to support social login
+  - [ ] Test OAuth authentication flows
 
 ### Basic Card Data Import
 - [ ] **Scryfall API integration**
