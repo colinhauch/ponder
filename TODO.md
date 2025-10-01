@@ -21,8 +21,8 @@ This TODO list is organized by the implementation phases outlined in the project
   - [x] Create `deck_cards` table (deck_id, card_id, quantity, sideboard)
   - [x] Create `card_pools` table (id, user_id, name, description, format)
   - [x] Create `chat_sessions` table (id, user_id, deck_id, messages, created_at)
-  - [ ] Set up Row Level Security (RLS) policies
-  - [ ] Create database indexes for performance
+  - [x] Set up Row Level Security (RLS) policies
+  - [x] Create database indexes for performance
 
 ### Authentication Setup
 - [ ] **Implement user authentication with Supabase Auth**
