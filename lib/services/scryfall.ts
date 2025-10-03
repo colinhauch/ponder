@@ -240,8 +240,6 @@ export function transformCardForDatabase(scryfallCard: ScryfallCard): DatabaseCa
     collector_number: scryfallCard.collector_number || null,
     keywords: scryfallCard.keywords.join(", "),
     image_uris: scryfallCard.image_uris || null,
-    scryfall_uri: scryfallCard.scryfall_uri || null,
-    card_object_uri: scryfallCard.uri, // The API endpoint for full card data
   };
 }
 
@@ -252,9 +250,30 @@ export function transformCardsForDatabase(scryfallCards: ScryfallCard[]): Databa
   return scryfallCards.map(transformCardForDatabase);
 }
 
-import { createClient as createBrowserClient } from "../supabase/client";
+import { createClient } from "@supabase/supabase-js";
 import { writeFile } from "fs/promises";
 import { join } from "path";
+
+/**
+ * Create Supabase client for Node.js scripts
+ * Handles environment variable loading for script execution
+ */
+function createScriptClient() {
+  // For Node.js scripts, we need to ensure environment variables are available
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY;
+  
+  if (!url || !key) {
+    throw new Error(
+      'Missing Supabase environment variables. Please check your .env.local file contains:\n' +
+      '- NEXT_PUBLIC_SUPABASE_URL\n' +
+      '- NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY'
+    );
+  }
+  
+  // Create client directly with environment variables
+  return createClient(url, key);
+}
 
 /**
  * Save cards to a local JSON file for inspection
@@ -314,8 +333,8 @@ export async function saveCompleteCardsToFile(
  * For scripts, we'll create the client directly to avoid server dependency
  */
 export async function uploadCardsToDatabase(cards: DatabaseCard[], batchSize: number = 1000): Promise<void> {
-  // For script usage, import createBrowserClient dynamically  
-  const supabase = createBrowserClient();
+  // For script usage, use the script client that handles environment variables properly
+  const supabase = createScriptClient();
   
   console.log(`Uploading ${cards.length} cards to database in batches of ${batchSize}...`);
   
