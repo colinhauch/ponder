@@ -55,7 +55,6 @@ export type Database = {
       }
       cards: {
         Row: {
-          card_object_uri: string
           cmc: number
           collector_number: string | null
           color_identity: string[] | null
@@ -69,14 +68,12 @@ export type Database = {
           power: string | null
           rarity: string
           scryfall_id: string
-          scryfall_uri: string | null
           set_code: string
           toughness: string | null
           type_line: string
           updated_at: string
         }
         Insert: {
-          card_object_uri: string
           cmc: number
           collector_number?: string | null
           color_identity?: string[] | null
@@ -90,14 +87,12 @@ export type Database = {
           power?: string | null
           rarity: string
           scryfall_id: string
-          scryfall_uri?: string | null
           set_code: string
           toughness?: string | null
           type_line: string
           updated_at?: string
         }
         Update: {
-          card_object_uri?: string
           cmc?: number
           collector_number?: string | null
           color_identity?: string[] | null
@@ -111,7 +106,6 @@ export type Database = {
           power?: string | null
           rarity?: string
           scryfall_id?: string
-          scryfall_uri?: string | null
           set_code?: string
           toughness?: string | null
           type_line?: string
