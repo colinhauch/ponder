@@ -10,7 +10,29 @@
  */
 
 import { mkdir } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { importSet } from '../lib/services/scryfall.js';
+
+// Load environment variables manually for Node.js scripts
+async function loadEnvVariables() {
+  try {
+    const envContent = await readFile('.env.local', 'utf-8');
+    envContent.split('\n').forEach(line => {
+      const match = line.match(/^([^#][^=]*?)=(.*)$/);
+      if (match) {
+        const [, key, value] = match;
+        const cleanKey = key.trim();
+        const cleanValue = value.trim().replace(/^["']|["']$/g, '');
+        if (!process.env[cleanKey]) {
+          process.env[cleanKey] = cleanValue;
+        }
+      }
+    });
+  } catch (error) {
+    console.warn('Could not load .env.local file:', (error as Error).message);
+    console.warn('Make sure your environment variables are set manually');
+  }
+}
 
 async function main() {
   const setCode = process.argv[2];
@@ -31,6 +53,9 @@ async function main() {
   }
   
   try {
+    // Load environment variables first
+    await loadEnvVariables();
+    
     // Ensure data directory exists
     await mkdir('./data', { recursive: true });
     
