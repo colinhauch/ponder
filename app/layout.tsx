@@ -5,6 +5,8 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import "./globals.css";
 import '@mantine/core/styles.css';
 
+export const runtime = 'edge';
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
