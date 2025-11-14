@@ -1,4 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Paper, Title, Container, Alert } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+import classes from './page.module.css';
 
 export default async function Page({
   searchParams,
@@ -8,29 +10,29 @@ export default async function Page({
   const params = await searchParams;
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">
-                Sorry, something went wrong.
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {params?.error ? (
-                <p className="text-sm text-muted-foreground">
-                  Code error: {params.error}
-                </p>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  An unspecified error occurred.
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+    <div className={classes.container}>
+      <Container size="xs">
+        <Paper radius="md" p="xl" withBorder shadow="md" className={classes.paper}>
+          <div className={classes.icon}>
+            <IconAlertCircle size={48} stroke={1.5} />
+          </div>
+          <Title order={2} className={classes.title}>
+            Sorry, something went wrong.
+          </Title>
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            color="red"
+            variant="light"
+            mt="lg"
+          >
+            {params?.error ? (
+              <>Code error: {params.error}</>
+            ) : (
+              <>An unspecified error occurred.</>
+            )}
+          </Alert>
+        </Paper>
+      </Container>
     </div>
   );
 }
