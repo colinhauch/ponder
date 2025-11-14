@@ -52,6 +52,7 @@ Add ! after type for breaking changes: feat!: or feat(api)!:
 - No period at end
 - 50 characters or less
 - Be specific but concise
+- **IMPORTANT**: Do NOT include "Co-Authored-By" or "Generated with Claude Code" clauses in the PR body.
 
 ### Body (Optional)
 - Separate from description with blank line
