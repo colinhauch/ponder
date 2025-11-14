@@ -2,5 +2,5 @@
   "name": "ponder",
   "compatibility_flags": ["nodejs_compat"],
   "compatibility_date": "2025-11-14",
-  "pages_build_output_dir": ".open-next/worker"
+  "pages_build_output_dir": ".open-next"
 }
