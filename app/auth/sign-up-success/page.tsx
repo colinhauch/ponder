@@ -2,8 +2,6 @@ import { Paper, Title, Text, Container } from '@mantine/core';
 import { IconMailCheck } from '@tabler/icons-react';
 import classes from './page.module.css';
 
-export const runtime = 'edge';
-
 export default function Page() {
   return (
     <div className={classes.container}>

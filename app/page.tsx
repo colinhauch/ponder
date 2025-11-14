@@ -3,8 +3,6 @@ import { Header } from "@/components/landing/header";
 import { HeroBullets } from "@/components/landing/hero-bullets";
 import { Footer } from "@/components/landing/footer";
 
-export const runtime = 'edge';
-
 export default function Home() {
   return (
     <Box style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

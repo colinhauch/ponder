@@ -1,8 +1,6 @@
 import { Container, Title, Text, Button, Paper } from '@mantine/core';
 import Link from 'next/link';
 
-export const runtime = 'edge';
-
 export default function NotFound() {
   return (
     <Container size="sm" style={{ paddingTop: '5rem', paddingBottom: '5rem' }}>
