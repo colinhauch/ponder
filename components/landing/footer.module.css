@@ -1,0 +1,11 @@
+.footer {
+  border-top: 1px solid var(--mantine-color-default-border);
+  padding-top: calc(var(--mantine-spacing-xl) * 2);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
+}
+
+.footerSection {
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-bottom: var(--mantine-spacing-lg);
+  }
+}
