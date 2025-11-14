@@ -2,6 +2,8 @@ import { Paper, Title, Container, Alert } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import classes from './page.module.css';
 
+export const runtime = 'edge';
+
 export default async function Page({
   searchParams,
 }: {
