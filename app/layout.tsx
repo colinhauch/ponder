@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import "./globals.css";
+import '@mantine/core/styles.css';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -9,8 +11,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+  title: "Ponder - Magic: The Gathering Deck Builder",
+  description: "Build, brew, and master your Magic decks with the most intuitive deck building platform for Magic: The Gathering.",
 };
 
 const geistSans = Geist({
@@ -26,6 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={`${geistSans.className} antialiased`}>
         <ThemeProvider
           attribute="class"
@@ -33,7 +38,28 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <MantineProvider
+            defaultColorScheme="dark"
+            theme={{
+              primaryColor: 'violet',
+              colors: {
+                violet: [
+                  '#f3f0ff',
+                  '#e5dbff',
+                  '#d0bfff',
+                  '#b197fc',
+                  '#9775fa',
+                  '#845ef7',
+                  '#7950f2',
+                  '#7048e8',
+                  '#6741d9',
+                  '#5f3dc4',
+                ],
+              },
+            }}
+          >
+            {children}
+          </MantineProvider>
         </ThemeProvider>
       </body>
     </html>
