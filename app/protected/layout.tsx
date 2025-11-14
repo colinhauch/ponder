@@ -5,6 +5,8 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 
+export const runtime = 'edge';
+
 export default function ProtectedLayout({
   children,
 }: {

@@ -3,8 +3,6 @@ import { Header } from "@/components/landing/header";
 import { HeroBullets } from "@/components/landing/hero-bullets";
 import { Footer } from "@/components/landing/footer";
 
-// Force dynamic rendering to avoid static generation issues
-export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
 export default function Home() {
