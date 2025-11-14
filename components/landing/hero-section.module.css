@@ -1,0 +1,85 @@
+.hero {
+  padding-top: calc(var(--mantine-spacing-xl) * 4);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 4);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+}
+
+.heroContent {
+  padding-right: calc(var(--mantine-spacing-xl) * 2);
+
+  @media (max-width: $mantine-breakpoint-md) {
+    padding-right: 0;
+    margin-bottom: calc(var(--mantine-spacing-xl) * 2);
+  }
+}
+
+.title {
+  font-weight: 700;
+  line-height: 1.1;
+  font-size: 56px;
+  max-width: 600px;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: 42px;
+    max-width: 100%;
+  }
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    font-size: 32px;
+  }
+}
+
+.description {
+  max-width: 540px;
+  opacity: 0.85;
+
+  @media (max-width: $mantine-breakpoint-md) {
+    max-width: 100%;
+  }
+}
+
+.control {
+  padding-left: 40px;
+  padding-right: 40px;
+  font-size: 18px;
+  height: 54px;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    width: 100%;
+  }
+}
+
+.cardGrid {
+  @media (max-width: $mantine-breakpoint-md) {
+    margin-top: calc(var(--mantine-spacing-xl) * 2);
+  }
+}
+
+.magicCard {
+  aspect-ratio: 5/7;
+  background: linear-gradient(
+    to bottom right,
+    var(--mantine-color-violet-1),
+    var(--mantine-color-violet-2)
+  );
+  border: 1px solid var(--mantine-color-default-border);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.magicCard:hover {
+  transform: translateY(-4px);
+}
+
+.footer {
+  border-top: 1px solid var(--mantine-color-default-border);
+  padding-top: calc(var(--mantine-spacing-xl) * 2);
+  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
+}
+
+.footerSection {
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-bottom: var(--mantine-spacing-lg);
+  }
+}
