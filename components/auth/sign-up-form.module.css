@@ -1,15 +1,9 @@
 .authContainer {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--mantine-spacing-xl);
-  background: linear-gradient(
-    135deg,
-    var(--mantine-color-dark-8) 0%,
-    var(--mantine-color-dark-7) 50%,
-    var(--mantine-color-dark-8) 100%
-  );
+  min-height: calc(100vh - 200px);
 
   @media (max-width: $mantine-breakpoint-sm) {
     padding: var(--mantine-spacing-md);
