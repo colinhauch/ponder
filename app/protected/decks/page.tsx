@@ -33,7 +33,7 @@ export default async function DecksPage() {
           </Text>
         </div>
 
-        <Button component={Link} href="/protected/deck-builder/new" size="md">
+        <Button component={Link} href="/protected/deck-editor/new" size="md">
           Create New Deck
         </Button>
 

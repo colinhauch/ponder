@@ -22,24 +22,29 @@ export function DeckCard({ deck }: DeckCardProps) {
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Stack gap="md">
-        <div>
-          <Group justify="space-between" mb="xs">
-            <Text fw={500} size="lg">
-              {deck.name}
-            </Text>
-            {formatLabel && (
-              <Badge color="blue" variant="light">
-                {formatLabel}
-              </Badge>
-            )}
-          </Group>
+        <Link
+          href={`/decks/${deck.id}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <div>
+            <Group justify="space-between" mb="xs">
+              <Text fw={500} size="lg">
+                {deck.name}
+              </Text>
+              {formatLabel && (
+                <Badge color="blue" variant="light">
+                  {formatLabel}
+                </Badge>
+              )}
+            </Group>
 
-          {deck.description && (
-            <Text size="sm" c="dimmed" lineClamp={2}>
-              {deck.description}
-            </Text>
-          )}
-        </div>
+            {deck.description && (
+              <Text size="sm" c="dimmed" lineClamp={2}>
+                {deck.description}
+              </Text>
+            )}
+          </div>
+        </Link>
 
         <Group justify="space-between">
           <div>
@@ -55,7 +60,7 @@ export function DeckCard({ deck }: DeckCardProps) {
 
           <Button
             component={Link}
-            href={`/protected/deck-builder/${deck.id}`}
+            href={`/protected/deck-editor/${deck.id}`}
             variant="light"
             size="sm"
           >

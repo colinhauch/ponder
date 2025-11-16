@@ -52,7 +52,8 @@ export async function updateSession(request: NextRequest) {
     "/",
     "/login",
     "/auth",
-    "/deck-builder", // Allow deck builder for everyone
+    "/deck-editor", // Allow deck editor for everyone
+    "/decks", // Allow public deck viewing
   ];
 
   const isPublicRoute = publicRoutes.some((route) =>
