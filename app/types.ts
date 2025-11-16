@@ -1,6 +1,7 @@
 import type { Database } from "../lib/types/database"
 
 export type Card = Database["public"]["Tables"]["cards"]["Row"];
+export type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
 // TODO: Add MTG color enums to database schema
 // Magic: The Gathering color enum based on Scryfall API

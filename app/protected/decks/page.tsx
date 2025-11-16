@@ -1,19 +1,27 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Container, Title, Text, Button, Stack } from "@mantine/core";
+import { Container, Title, Text, Button, Stack, Alert } from "@mantine/core";
 import Link from "next/link";
+import { DeckList } from "@/components/decks/deck-list";
 
 export default async function DecksPage() {
   const supabase = await createClient();
 
   const {
     data: { user },
-    error,
+    error: authError,
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
+  if (authError || !user) {
     redirect("/auth/login");
   }
+
+  // Fetch user's decks from Supabase
+  const { data: decks, error: decksError } = await supabase
+    .from("decks")
+    .select("*")
+    .eq("is_archived", false)
+    .order("updated_at", { ascending: false });
 
   return (
     <Container size="lg" py="xl">
@@ -29,10 +37,13 @@ export default async function DecksPage() {
           Create New Deck
         </Button>
 
-        {/* Deck list will be implemented here */}
-        <Text c="dimmed" ta="center" py="xl">
-          Your decks will appear here
-        </Text>
+        {decksError ? (
+          <Alert color="red" title="Error loading decks">
+            Failed to load your decks. Please try again later.
+          </Alert>
+        ) : (
+          <DeckList decks={decks || []} />
+        )}
       </Stack>
     </Container>
   );
