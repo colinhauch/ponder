@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/lib/supabase/server";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
+import { Container, Title, Text, Stack, Button, SimpleGrid, Card } from "@mantine/core";
+import { IconCards, IconSparkles, IconBook } from "@tabler/icons-react";
+import Link from "next/link";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -13,24 +13,56 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
+    <Container size="lg" py="xl">
+      <Stack gap="xl">
+        <div>
+          <Title order={1}>Welcome to Ponder</Title>
+          <Text c="dimmed" size="lg" mt="xs">
+            Your Magic: The Gathering deck building companion
+          </Text>
         </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(data.claims, null, 2)}
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
-      </div>
-    </div>
+
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Stack gap="md">
+              <IconCards size={32} stroke={1.5} />
+              <Title order={3}>My Decks</Title>
+              <Text size="sm" c="dimmed">
+                View and manage all your Magic decks in one place
+              </Text>
+              <Button component={Link} href="/protected/decks" variant="light" fullWidth>
+                View Decks
+              </Button>
+            </Stack>
+          </Card>
+
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Stack gap="md">
+              <IconSparkles size={32} stroke={1.5} />
+              <Title order={3}>Deck Builder</Title>
+              <Text size="sm" c="dimmed">
+                Create new decks with AI-powered suggestions
+              </Text>
+              <Button component={Link} href="/protected/deck-builder/new" variant="light" fullWidth>
+                Build Deck
+              </Button>
+            </Stack>
+          </Card>
+
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
+            <Stack gap="md">
+              <IconBook size={32} stroke={1.5} />
+              <Title order={3}>Collections</Title>
+              <Text size="sm" c="dimmed">
+                Manage your card collection and pools
+              </Text>
+              <Button component={Link} href="/protected/collections" variant="light" fullWidth disabled>
+                Coming Soon
+              </Button>
+            </Stack>
+          </Card>
+        </SimpleGrid>
+      </Stack>
+    </Container>
   );
 }
