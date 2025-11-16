@@ -18,8 +18,8 @@ export default async function DeckBuilderPage({
     redirect("/auth/login");
   }
 
-  // Access the deck ID from params (for future use)
-  const { id: _deckId } = await params;
+  // Await params to satisfy Next.js 15 requirements
+  await params;
 
   return <ResizableGrid />;
 }
