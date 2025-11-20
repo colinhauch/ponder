@@ -66,3 +66,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* MTG Card hover effects */
+.mtg-card-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.mtg-card-container:active {
+  cursor: grabbing !important;
+}
