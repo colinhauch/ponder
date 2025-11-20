@@ -20,8 +20,8 @@ function ResizableGridContent() {
   const isDraggingVertical = useRef(false);
 
   // Deck state management
-  const { mainDeck, sideboard, loading, addCard } = useDeckState({ deckId });
-  const { draggedCard, setDraggedCard } = useDeckBuilder();
+  const { mainDeck, sideboard, loading, addCard, removeCard } = useDeckState({ deckId });
+  const { draggedCard, setDraggedCard, dragSource, setDragSource } = useDeckBuilder();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -69,6 +69,13 @@ function ResizableGridContent() {
   // Handle card drag from pool
   const handleCardDragStart = (card: Card) => {
     setDraggedCard(card);
+    setDragSource('pool');
+  };
+
+  // Handle card drag from deck
+  const handleDeckCardDragStart = (card: Card) => {
+    setDraggedCard(card);
+    setDragSource('deck');
   };
 
   // Handle card click
@@ -85,14 +92,29 @@ function ResizableGridContent() {
 
   // Handle drop on deck pane
   const handleDeckDrop = async () => {
-    if (draggedCard) {
+    if (draggedCard && dragSource === 'pool') {
       await addCard(draggedCard, false, 1);
       setDraggedCard(null);
+      setDragSource(null);
     }
   };
 
+  // Handle drag end (removal when dragged outside deck pane)
+  const handleDragEnd = async () => {
+    // If we were dragging from deck and it wasn't dropped on the deck pane, remove it
+    if (draggedCard && dragSource === 'deck') {
+      await removeCard(draggedCard.id, false, 1);
+    }
+    setDraggedCard(null);
+    setDragSource(null);
+  };
+
   return (
-    <div ref={containerRef} style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}>
+    <div
+      ref={containerRef}
+      style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}
+      onDragEnd={handleDragEnd}
+    >
       {/* Left Column */}
       <div style={{ width: `${leftWidth}%`, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
         {/* Top Pane - Current Deck */}
@@ -108,6 +130,7 @@ function ResizableGridContent() {
             loading={loading}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
+            onCardDragStart={handleDeckCardDragStart}
             onDrop={handleDeckDrop}
           />
         </div>

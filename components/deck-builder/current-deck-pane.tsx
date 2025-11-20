@@ -16,6 +16,7 @@ interface CurrentDeckPaneProps {
   loading?: boolean;
   onCardClick?: (card: Card) => void;
   onCardContextMenu?: (card: Card) => void;
+  onCardDragStart?: (card: Card) => void;
   onDrop?: () => void;
 }
 
@@ -25,6 +26,7 @@ export function CurrentDeckPane({
   loading = false,
   onCardClick,
   onCardContextMenu,
+  onCardDragStart,
   onDrop,
 }: CurrentDeckPaneProps) {
   // Calculate statistics
@@ -161,7 +163,8 @@ export function CurrentDeckPane({
                     cards={group.cards.map((dc) => ({ card: dc.card, quantity: dc.quantity }))}
                     cardSize="small"
                     columnsCount={6}
-                    draggable={false}
+                    draggable={true}
+                    onCardDragStart={onCardDragStart}
                     onCardClick={onCardClick}
                     onCardContextMenu={onCardContextMenu}
                   />
@@ -185,7 +188,8 @@ export function CurrentDeckPane({
                       cards={sideboardCards.map((dc) => ({ card: dc.card, quantity: dc.quantity }))}
                       cardSize="small"
                       columnsCount={6}
-                      draggable={false}
+                      draggable={true}
+                      onCardDragStart={onCardDragStart}
                       onCardClick={onCardClick}
                       onCardContextMenu={onCardContextMenu}
                     />

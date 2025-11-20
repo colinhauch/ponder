@@ -6,6 +6,8 @@ import type { Card } from '@/app/types';
 interface DeckBuilderContextType {
   draggedCard: Card | null;
   setDraggedCard: (card: Card | null) => void;
+  dragSource: 'pool' | 'deck' | null;
+  setDragSource: (source: 'pool' | 'deck' | null) => void;
   cardPool: Map<string, Card>;
   setCardPool: (pool: Map<string, Card>) => void;
 }
@@ -14,6 +16,7 @@ const DeckBuilderContext = createContext<DeckBuilderContextType | undefined>(und
 
 export function DeckBuilderProvider({ children }: { children: ReactNode }) {
   const [draggedCard, setDraggedCard] = useState<Card | null>(null);
+  const [dragSource, setDragSource] = useState<'pool' | 'deck' | null>(null);
   const [cardPool, setCardPool] = useState<Map<string, Card>>(new Map());
 
   return (
@@ -21,6 +24,8 @@ export function DeckBuilderProvider({ children }: { children: ReactNode }) {
       value={{
         draggedCard,
         setDraggedCard,
+        dragSource,
+        setDragSource,
         cardPool,
         setCardPool,
       }}
