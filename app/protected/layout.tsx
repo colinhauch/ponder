@@ -14,9 +14,9 @@ export default async function ProtectedLayout({
   const user = data?.claims;
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <main style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Header matching landing page style */}
-      <header className={classes.header}>
+      <header className={classes.header} style={{ flexShrink: 0 }}>
         <Container size="xl">
           <Group justify="space-between" py="md">
             <Anchor
@@ -41,7 +41,7 @@ export default async function ProtectedLayout({
       </header>
 
       {/* Content area */}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, overflow: 'hidden', minHeight: 0 }}>
         {children}
       </div>
     </main>

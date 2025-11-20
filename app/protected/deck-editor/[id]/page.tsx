@@ -21,5 +21,9 @@ export default async function DeckBuilderPage({
   // Await params to satisfy Next.js 15 requirements
   await params;
 
-  return <ResizableGrid />;
+  return (
+    <div style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+      <ResizableGrid />
+    </div>
+  );
 }
