@@ -20,7 +20,7 @@ function ResizableGridContent() {
   const isDraggingVertical = useRef(false);
 
   // Deck state management
-  const { mainDeck, sideboard, loading, addCard, removeCard } = useDeckState({ deckId });
+  const { mainDeck, sideboard, format, loading, addCard, removeCard, updateFormat } = useDeckState({ deckId });
   const { draggedCard, setDraggedCard, dragSource, setDragSource } = useDeckBuilder();
 
   useEffect(() => {
@@ -91,9 +91,9 @@ function ResizableGridContent() {
   };
 
   // Handle drop on deck pane
-  const handleDeckDrop = async () => {
+  const handleDeckDrop = async (isSideboard: boolean) => {
     if (draggedCard && dragSource === 'pool') {
-      await addCard(draggedCard, false, 1);
+      await addCard(draggedCard, isSideboard, 1);
       setDraggedCard(null);
       setDragSource(null);
     }
@@ -127,7 +127,9 @@ function ResizableGridContent() {
           <CurrentDeckPane
             mainDeck={mainDeck}
             sideboard={sideboard}
+            format={format}
             loading={loading}
+            onFormatChange={updateFormat}
             onCardClick={handleCardClick}
             onCardContextMenu={handleCardContextMenu}
             onCardDragStart={handleDeckCardDragStart}

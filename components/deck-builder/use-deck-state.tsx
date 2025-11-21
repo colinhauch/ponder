@@ -15,15 +15,30 @@ interface UseDeckStateProps {
 export function useDeckState({ deckId }: UseDeckStateProps) {
   const [mainDeck, setMainDeck] = useState<Map<string, DeckCardWithData>>(new Map());
   const [sideboard, setSideboard] = useState<Map<string, DeckCardWithData>>(new Map());
+  const [format, setFormat] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch deck cards from database
+  // Fetch deck cards and deck metadata from database
   useEffect(() => {
     async function fetchDeckCards() {
       try {
         const supabase = createClient();
 
+        // Fetch deck metadata (including format)
+        const { data: deckData, error: deckError } = await supabase
+          .from('decks')
+          .select('format')
+          .eq('id', deckId)
+          .single();
+
+        if (deckError) {
+          console.error('Error fetching deck metadata:', deckError);
+        } else {
+          setFormat(deckData?.format || null);
+        }
+
+        // Fetch deck cards
         const { data, error: fetchError } = await supabase
           .from('deck_cards')
           .select('*, card:cards(*)')
@@ -203,6 +218,29 @@ export function useDeckState({ deckId }: UseDeckStateProps) {
     [mainDeck, sideboard]
   );
 
+  // Update deck format
+  const updateFormat = useCallback(
+    async (newFormat: string | null) => {
+      const supabase = createClient();
+
+      // Optimistic update
+      setFormat(newFormat);
+
+      // Update database
+      const { error: updateError } = await supabase
+        .from('decks')
+        .update({ format: newFormat })
+        .eq('id', deckId);
+
+      if (updateError) {
+        console.error('Error updating deck format:', updateError);
+        // Revert on error
+        setFormat(format);
+      }
+    },
+    [deckId, format]
+  );
+
   // Get deck statistics
   const stats = {
     mainDeckCount: Array.from(mainDeck.values()).reduce((sum, card) => sum + card.quantity, 0),
@@ -214,10 +252,12 @@ export function useDeckState({ deckId }: UseDeckStateProps) {
   return {
     mainDeck,
     sideboard,
+    format,
     loading,
     error,
     stats,
     addCard,
     removeCard,
+    updateFormat,
   };
 }
