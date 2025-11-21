@@ -52,7 +52,9 @@ app/
 - **SSR-first:** Use `@supabase/ssr` for server components
 - **Client access:** Create client in components only when needed
 - **Middleware:** Route protection via `middleware.ts`
-- **Environment:** `.env.local` for local dev, Wrangler secrets for production
+- **Environment:** `.env.local` for local dev, `.env.production` for production, Wrangler secrets for Cloudflare
+- **Local Development:** Use local Supabase (Docker) via `npm run supabase:start` - NEVER develop against production
+- **Database Migrations:** Version-controlled SQL files in `supabase/migrations/` applied chronologically
 
 ### Database Schema Key Tables
 - `cards` - MTG card data (imported from Scryfall)
@@ -94,6 +96,54 @@ npm run import-set-dry        # Dry run of set import
 2. **Before committing:** Ensure `npm run build` succeeds
 3. **Testing imports:** Use `npm run import-set-dry` before full import
 4. **Local Supabase:** Keep running with `npm run supabase:start` during dev
+
+### Database Migration Workflow
+
+**Local Development (Recommended):**
+```bash
+# 1. Start local Supabase (first time setup)
+npm run supabase:start  # Starts Docker containers on localhost:54321
+
+# 2. Create a new migration
+npx supabase migration new <description>  # Creates timestamped .sql file
+
+# 3. Edit the migration file in supabase/migrations/
+# Add your SQL (CREATE TABLE, ALTER TABLE, etc.)
+
+# 4. Apply migrations to local database
+npm run db:reset  # Resets and applies all migrations
+
+# 5. Generate TypeScript types
+npm run gen:db-types  # Updates lib/types/database.ts
+
+# 6. Test your changes locally
+npm run dev  # Verify everything works
+
+# 7. Deploy to production (automated via GitHub Actions on push to prod)
+git add supabase/migrations/*
+git commit -m "feat(db): description of change"
+git push origin prod  # GitHub Actions runs npm run db:push automatically
+```
+
+**Syncing from Dashboard Changes:**
+```bash
+# If you made changes in Supabase Dashboard (not recommended):
+npm run db:pull  # Creates migration file from remote schema
+npm run gen:db-types  # Update TypeScript types
+# Review and commit the generated migration
+```
+
+**Environment Setup:**
+- **`.env.local`** - Points to local Supabase (http://127.0.0.1:54321)
+- **`.env.production`** - Points to production Supabase (https://iqyckdnagcmyvbuqbjxn.supabase.co)
+- **Local anon key:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0` (default for all local instances)
+
+**Key Principles:**
+- Always develop against local Supabase, never production
+- Migrations are source of truth for schema
+- Test migrations locally before pushing
+- Use `npm run gen:db-types` after every schema change
+- Commit migration files to git
 
 ## Code Conventions
 
@@ -198,10 +248,14 @@ public/                # Static assets
 - All protected routes enforce auth in middleware
 
 ### Data Import Strategy
-- Import full sets from Scryfall on-demand
-- Cache card images via Cloudflare CDN
-- User collections reference existing card data (foreign keys)
+- Import full sets from Scryfall on-demand via `npm run import-set <setcode>`
+- Card data stored in shared `cards` table (one copy per card, not per user)
+- User collections reference existing card data via foreign keys
 - No duplicate card storage per user
+- Cache card images via Cloudflare CDN
+- **Recommended test set:** TLA (Temporal Odyssey) - ~280 cards
+- **Seed workflow:** See `supabase/SEED_DATA.md` for detailed instructions
+- Import script auto-detects local vs production based on `.env.local`
 
 ### Performance Considerations
 - Lazy load card images in grid views
@@ -230,7 +284,20 @@ public/                # Static assets
 - Types in `lib/types/database.ts` are auto-generated
 - Run `npm run gen:db-types` after every schema change
 - Never manually edit database types file
+- Pulls from production database by default (project-id: iqyckdnagcmyvbuqbjxn)
 - Requires Supabase CLI authentication
+
+### Local vs Production Environments
+- **Local Development:** Docker-based Supabase on `http://127.0.0.1:54321`
+  - Start with `npm run supabase:start`
+  - Completely isolated from production
+  - Safe for testing destructive changes
+  - Uses default local anon key (same for all developers)
+- **Production:** Hosted at `https://iqyckdnagcmyvbuqbjxn.supabase.co`
+  - Live data, use with caution
+  - Migrations deployed automatically via GitHub Actions on push to `prod` branch
+  - Never develop directly against production
+- **Configuration:** `.env.local` points to local, `.env.production` points to production
 
 ## Security Notes
 
