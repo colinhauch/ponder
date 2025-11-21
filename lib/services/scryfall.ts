@@ -257,20 +257,30 @@ import { join } from "path";
 /**
  * Create Supabase client for Node.js scripts
  * Handles environment variable loading for script execution
+ *
+ * Prefers service role key for bypassing RLS policies during imports,
+ * falls back to anon key for backward compatibility.
  */
 function createScriptClient() {
   // For Node.js scripts, we need to ensure environment variables are available
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Prefer service role key (bypasses RLS) for import scripts
+  // Fall back to anon key for backward compatibility
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
     throw new Error(
       'Missing Supabase environment variables. Please check your .env.local file contains:\n' +
       '- NEXT_PUBLIC_SUPABASE_URL\n' +
-      '- NEXT_PUBLIC_SUPABASE_ANON_KEY'
+      '- SUPABASE_SERVICE_ROLE_KEY (recommended) or NEXT_PUBLIC_SUPABASE_ANON_KEY'
     );
   }
-  
+
+  // Log which key type is being used (for debugging)
+  const keyType = process.env.SUPABASE_SERVICE_ROLE_KEY ? 'service role' : 'anon';
+  console.log(`🔑 Using ${keyType} key for database operations`);
+
   // Create client directly with environment variables
   return createClient(url, key);
 }
