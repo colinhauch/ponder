@@ -20,15 +20,7 @@ CREATE INDEX idx_collections_card_id ON collections(card_id);
 CREATE INDEX idx_collections_pool_name ON collections(pool_name);
 CREATE INDEX idx_collections_user_pool ON collections(user_id, pool_name);
 
--- Create updated_at trigger
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
+-- Create updated_at trigger (function defined in cards migration)
 CREATE TRIGGER update_collections_updated_at
     BEFORE UPDATE ON collections
     FOR EACH ROW
