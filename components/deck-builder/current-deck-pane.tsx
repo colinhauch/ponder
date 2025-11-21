@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Paper, Title, Stack, Text, Group, Badge, Divider, Loader, Center, Select, SegmentedControl, Indicator } from '@mantine/core';
+import { Paper, Title, Stack, Text, Group, Badge, Loader, Center, Select, SegmentedControl } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { CardGrid } from './card-grid';
 import type { Card } from '@/app/types';
