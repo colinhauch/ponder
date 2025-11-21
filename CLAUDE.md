@@ -35,6 +35,10 @@ Ponder is an AI-assisted Magic: The Gathering deck builder built for players to 
 - **Scryfall API** - MTG card data source (no API key required)
 - **AI Providers** (planned) - Anthropic Claude, OpenAI
 
+### Developer Tools
+- **dotenv** - Environment variable management for scripts
+- **tsx** - TypeScript execution for Node.js scripts
+
 ## Architecture Patterns
 
 ### App Router Structure
@@ -86,15 +90,50 @@ npm run db:pull               # Pull remote schema to local
 npm run supabase:start        # Start local Supabase
 npm run supabase:stop         # Stop local Supabase
 
-# Scripts
-npm run import-set            # Import MTG set data from Scryfall
-npm run import-set-dry        # Dry run of set import
+# Card Data Import
+npm run import-set <setcode>  # Import MTG set data from Scryfall
+```
+
+### Card Import Script Usage
+The import script (`scripts/import-set/`) is a modular, class-based tool for importing MTG card data from Scryfall.
+
+**Basic Usage:**
+```bash
+npm run import-set tla                    # Import TLA set (~280 cards)
+npm run import-set dsk --save-sample      # Import and save 5 sample cards to ./data/
+npm run import-set blb --refresh          # Delete existing cards, then re-import
+npm run import-set mh3 --save-complete    # Import and save all cards to JSON
+```
+
+**Available Flags:**
+- `--include-tokens` - Include token cards (excluded by default)
+- `--include-variations` - Include alternate art variations (excluded by default)
+- `--refresh` - Delete existing cards from this set before importing
+- `--save-sample` - Save first 5 cards to JSON file in `./data/`
+- `--save-complete` - Save all cards to JSON file (warning: large file!)
+
+**Key Features:**
+- ✅ **Single art per card** - Excludes variations by default using `-is:variation`
+- ✅ **No tokens** - Excludes token cards by default using `-type:token`
+- ✅ **Clean re-imports** - `--refresh` flag deletes old data before importing
+- ✅ **Batch uploads** - 100 cards per batch for reliability
+- ✅ **Progress reporting** - Clear staged workflow with batch progress
+- ✅ **Service role key support** - Auto-detects and uses `SUPABASE_SERVICE_ROLE_KEY` for faster imports
+
+**Architecture:**
+```
+scripts/import-set/
+├── index.ts              # CLI entry point
+├── scryfallClient.ts     # Scryfall API client class
+├── supabaseClient.ts     # Supabase uploader class
+├── cardMapper.ts         # Data transformation functions
+└── types.ts              # TypeScript type definitions
 ```
 
 ### Common Development Tasks
 1. **After schema changes:** Run `npm run gen:db-types` to update TypeScript interfaces
 2. **Before committing:** Ensure `npm run build` succeeds
-3. **Testing imports:** Use `npm run import-set-dry` before full import
+3. **Testing card imports:** Start with small sets like `npm run import-set tla --save-sample`
 4. **Local Supabase:** Keep running with `npm run supabase:start` during dev
 
 ### Database Migration Workflow
@@ -168,8 +207,14 @@ components/             # Reusable React components
 lib/                   # Utilities and services
   ├── supabase/        # Supabase client creation
   ├── types/           # TypeScript type definitions
-  └── services/        # External API integrations (Scryfall, etc.)
-scripts/               # Node scripts (data import, etc.)
+  └── services/        # External API integrations (if needed)
+scripts/               # Node scripts
+  └── import-set/      # Modular card import script
+      ├── index.ts              # CLI entry point
+      ├── scryfallClient.ts     # Scryfall API client
+      ├── supabaseClient.ts     # Database uploader
+      ├── cardMapper.ts         # Data transformation
+      └── types.ts              # Script-specific types
 supabase/              # Supabase config and migrations
 public/                # Static assets
 ```
@@ -248,14 +293,21 @@ public/                # Static assets
 - All protected routes enforce auth in middleware
 
 ### Data Import Strategy
-- Import full sets from Scryfall on-demand via `npm run import-set <setcode>`
-- Card data stored in shared `cards` table (one copy per card, not per user)
-- User collections reference existing card data via foreign keys
-- No duplicate card storage per user
-- Cache card images via Cloudflare CDN
+- **Import tool:** Modular script at `scripts/import-set/` - see "Card Import Script Usage" above
+- **Single art per card:** Uses `-is:variation` Scryfall filter to exclude alternate arts by default
+- **No tokens by default:** Uses `-type:token` filter to exclude token cards
+- **Card data storage:** Shared `cards` table (one copy per card, not per user)
+- **User collections:** Reference existing card data via foreign keys (no duplicate storage)
+- **Image caching:** Card images cached via Cloudflare CDN
+- **Environment detection:** Auto-detects local vs production based on `.env.local`
 - **Recommended test set:** TLA (Temporal Odyssey) - ~280 cards
 - **Seed workflow:** See `supabase/SEED_DATA.md` for detailed instructions
-- Import script auto-detects local vs production based on `.env.local`
+
+**Quick Start:**
+```bash
+npm run db:reset                           # Reset local database
+npm run import-set tla --save-sample       # Import TLA and save sample
+```
 
 ### Performance Considerations
 - Lazy load card images in grid views
