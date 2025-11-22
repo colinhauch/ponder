@@ -19,14 +19,25 @@ export default async function ProtectedLayout({
       <header className={classes.header} style={{ flexShrink: 0 }}>
         <Container size="xl">
           <Group justify="space-between" py="md">
-            <Anchor
-              component={Link}
-              href="/protected"
-              className={classes.logo}
-              underline="never"
-            >
-              ponder
-            </Anchor>
+            <Group gap="md">
+              <Anchor
+                component={Link}
+                href="/protected"
+                className={classes.logo}
+                underline="never"
+              >
+                ponder
+              </Anchor>
+              <Anchor
+                component={Link}
+                href="/protected/decks"
+                underline="never"
+                c="dimmed"
+                style={{ fontWeight: 500 }}
+              >
+                Decks
+              </Anchor>
+            </Group>
 
             <Group gap="sm">
               {user?.email && (
