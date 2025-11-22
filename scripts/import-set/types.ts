@@ -2,6 +2,25 @@
  * Scryfall Card Response Types
  * Based on https://scryfall.com/docs/api/cards
  */
+export interface ScryfallCardFace {
+  name: string;
+  mana_cost?: string;
+  type_line: string;
+  oracle_text?: string;
+  power?: string;
+  toughness?: string;
+  colors?: string[];
+  artist?: string;
+  image_uris?: {
+    small: string;
+    normal: string;
+    large: string;
+    png: string;
+    art_crop: string;
+    border_crop: string;
+  };
+}
+
 export interface ScryfallCard {
   id: string;
   oracle_id: string;
@@ -19,6 +38,7 @@ export interface ScryfallCard {
     art_crop: string;
     border_crop: string;
   };
+  card_faces?: ScryfallCardFace[];
   mana_cost?: string;
   cmc: number;
   type_line: string;
@@ -78,6 +98,15 @@ export interface SupabaseCard {
   rarity: string;
   set_code: string;
   collector_number: string;
+  layout?: string;
+  back_image_uris?: {
+    small?: string;
+    normal?: string;
+    large?: string;
+    png?: string;
+    art_crop?: string;
+    border_crop?: string;
+  };
   image_uris?: {
     small?: string;
     normal?: string;
