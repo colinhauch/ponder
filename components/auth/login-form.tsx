@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Paper,
   TextInput,
@@ -23,6 +23,7 @@ import classes from './login-form.module.css';
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +50,11 @@ export function LoginForm() {
         password: values.password,
       });
       if (error) throw error;
-      router.push('/protected');
+
+      // Get redirect destination from query params, validate it's internal
+      const next = searchParams.get('next');
+      const redirectTo = next && next.startsWith('/') ? next : '/protected';
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {

@@ -64,6 +64,8 @@ export async function updateSession(request: NextRequest) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
+    // Preserve the original URL so we can redirect back after login
+    url.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(url);
   }
 

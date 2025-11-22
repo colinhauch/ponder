@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Paper,
   TextInput,
@@ -22,6 +22,7 @@ import classes from './sign-up-form.module.css';
 
 export function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,11 +47,15 @@ export function SignUpForm() {
     setError(null);
 
     try {
+      // Get redirect destination from query params, validate it's internal
+      const next = searchParams.get('next');
+      const redirectTo = next && next.startsWith('/') ? next : '/protected';
+
       const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}${redirectTo}`,
         },
       });
       if (error) throw error;
