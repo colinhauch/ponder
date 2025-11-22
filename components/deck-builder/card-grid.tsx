@@ -34,11 +34,11 @@ export function CardGrid({
 }: CardGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  // Calculate card dimensions based on size
+  // Calculate card dimensions based on size (63:88 ratio for MTG cards)
   const cardDimensions = {
     small: { width: 120, height: 168 },
-    medium: { width: 180, height: 252 },
-    large: { width: 240, height: 336 },
+    medium: { width: 180, height: 251 },
+    large: { width: 240, height: 335 },
   }[cardSize];
 
   const gap = 12;

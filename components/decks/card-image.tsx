@@ -12,7 +12,7 @@ export function CardImage({ card, quantity }: CardImageProps) {
       style={{
         position: "relative",
         width: "100%",
-        aspectRatio: "5 / 7", // Standard MTG card ratio
+        aspectRatio: "63 / 88", // Standard MTG card ratio
         borderRadius: "8px",
         overflow: "hidden",
       }}
