@@ -26,16 +26,27 @@ export function MTGCard({
 }: MTGCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+  const [showBackFace, setShowBackFace] = useState(false);
+
+  // Check if card is double-faced
+  const isDoubleFaced = card.layout && ['transform', 'modal_dfc', 'double_faced_token'].includes(card.layout);
+  const hasBackImage = !!card.back_image_uris;
 
   // Parse image URIs from JSON
   const imageUris = card.image_uris as { normal?: string; small?: string; large?: string } | null;
-  const imageUrl = imageUris?.normal || imageUris?.large || imageUris?.small;
+  const backImageUris = card.back_image_uris as { normal?: string; small?: string; large?: string } | null;
 
-  // Determine card dimensions based on size
+  const frontImageUrl = imageUris?.normal || imageUris?.large || imageUris?.small;
+  const backImageUrl = backImageUris?.normal || backImageUris?.large || backImageUris?.small;
+
+  // Determine which image to display
+  const imageUrl = (showBackFace && backImageUrl) ? backImageUrl : frontImageUrl;
+
+  // Determine card dimensions based on size (63:88 ratio for MTG cards)
   const dimensions = {
     small: { width: 120, height: 168 },
-    medium: { width: 180, height: 252 },
-    large: { width: 240, height: 336 },
+    medium: { width: 180, height: 251 },
+    large: { width: 240, height: 335 },
   }[size];
 
   const handleDragStart = (e: React.DragEvent) => {
@@ -53,6 +64,11 @@ export function MTGCard({
     onContextMenu?.(card, e);
   };
 
+  const handleFlipClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowBackFace(!showBackFace);
+  };
+
   return (
     <Tooltip
       label={
@@ -60,6 +76,7 @@ export function MTGCard({
           <Text size="sm" fw={600}>{card.name}</Text>
           <Text size="xs" c="dimmed">{card.type_line}</Text>
           {card.mana_cost && <Text size="xs">{card.mana_cost}</Text>}
+          {isDoubleFaced && <Text size="xs" c="blue">Double-faced card</Text>}
         </Box>
       }
       position="right"
@@ -183,6 +200,26 @@ export function MTGCard({
             }}
           >
             {quantity}×
+          </Badge>
+        )}
+
+        {isDoubleFaced && hasBackImage && (
+          <Badge
+            color="grape"
+            variant="filled"
+            size="sm"
+            onClick={handleFlipClick}
+            style={{
+              position: 'absolute',
+              bottom: '8px',
+              left: '8px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+              userSelect: 'none',
+            }}
+          >
+            {showBackFace ? 'Front' : 'Back'}
           </Badge>
         )}
       </Box>
