@@ -3,13 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { Container, Title, Text, Stack, Button, SimpleGrid, Card } from "@mantine/core";
 import { IconCards, IconSparkles, IconBook } from "@tabler/icons-react";
 import Link from "next/link";
+import { appPath } from "@/lib/paths";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) {
-    redirect("/auth/login");
+    redirect(appPath("/auth/login"));
   }
 
   return (
@@ -43,7 +44,7 @@ export default async function ProtectedPage() {
               <Text size="sm" c="dimmed">
                 Create new decks with AI-powered suggestions
               </Text>
-              <Button component={Link} href="/protected/deck-builder/new" variant="light" fullWidth>
+              <Button component={Link} href="/protected/deck-editor/new" variant="light" fullWidth>
                 Build Deck
               </Button>
             </Stack>

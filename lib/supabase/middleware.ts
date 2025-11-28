@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
+import { appPath } from "@/lib/paths";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -49,11 +50,11 @@ export async function updateSession(request: NextRequest) {
 
   // Public routes that don't require authentication
   const publicRoutes = [
-    "/",
-    "/login",
-    "/auth",
-    "/deck-editor", // Allow deck editor for everyone
-    "/decks", // Allow public deck viewing
+    appPath("/"),
+    appPath("/login"),
+    appPath("/auth"),
+    appPath("/deck-editor"), // Allow deck editor for everyone
+    appPath("/decks"), // Allow public deck viewing
   ];
 
   const isPublicRoute = publicRoutes.some((route) =>
@@ -63,7 +64,7 @@ export async function updateSession(request: NextRequest) {
   if (!user && !isPublicRoute) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
+    url.pathname = appPath("/auth/login");
     // Preserve the original URL so we can redirect back after login
     url.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(url);
