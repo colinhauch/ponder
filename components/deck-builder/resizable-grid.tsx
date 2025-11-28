@@ -1,29 +1,40 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { CurrentDeckPane } from './current-deck-pane';
 import { CardPoolPane } from './card-pool-pane';
 import { AiChatPane } from './ai-chat-pane';
+import { useDeckState } from './use-deck-state';
+import { DeckBuilderProvider, useDeckBuilder } from './deck-builder-context';
+import type { Card } from '@/app/types';
 
-export function ResizableGrid() {
-  const [leftWidth, setLeftWidth] = useState(50); // percentage
-  const [topHeight, setTopHeight] = useState(50); // percentage for left column split
+function ResizableGridContent() {
+  const params = useParams();
+  const deckId = params?.id as string;
+
+  const [leftWidth, setLeftWidth] = useState(50);
+  const [topHeight, setTopHeight] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDraggingHorizontal = useRef(false);
   const isDraggingVertical = useRef(false);
+
+  // Deck state management
+  const { mainDeck, sideboard, format, loading, addCard, removeCard, updateFormat } = useDeckState({ deckId });
+  const { draggedCard, setDraggedCard, dragSource, setDragSource } = useDeckBuilder();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (isDraggingHorizontal.current && containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();
         const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-        setLeftWidth(Math.min(Math.max(newWidth, 20), 80)); // Limit between 20-80%
+        setLeftWidth(Math.min(Math.max(newWidth, 20), 80));
       }
 
       if (isDraggingVertical.current && containerRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();
         const newHeight = ((e.clientY - containerRect.top) / containerRect.height) * 100;
-        setTopHeight(Math.min(Math.max(newHeight, 20), 80)); // Limit between 20-80%
+        setTopHeight(Math.min(Math.max(newHeight, 20), 80));
       }
     };
 
@@ -55,13 +66,75 @@ export function ResizableGrid() {
     document.body.style.userSelect = 'none';
   };
 
+  // Handle card drag from pool
+  const handleCardDragStart = (card: Card) => {
+    setDraggedCard(card);
+    setDragSource('pool');
+  };
+
+  // Handle card drag from deck
+  const handleDeckCardDragStart = (card: Card) => {
+    setDraggedCard(card);
+    setDragSource('deck');
+  };
+
+  // Handle card click
+  const handleCardClick = (card: Card) => {
+    console.log('Clicked card:', card.name);
+    // TODO: Open card detail modal
+  };
+
+  // Handle card context menu
+  const handleCardContextMenu = (card: Card) => {
+    console.log('Context menu for card:', card.name);
+    // TODO: Show context menu
+  };
+
+  // Handle drop on deck pane
+  const handleDeckDrop = async (isSideboard: boolean) => {
+    if (draggedCard && dragSource === 'pool') {
+      await addCard(draggedCard, isSideboard, 1);
+      setDraggedCard(null);
+      setDragSource(null);
+    }
+  };
+
+  // Handle drag end (removal when dragged outside deck pane)
+  const handleDragEnd = async () => {
+    // If we were dragging from deck and it wasn't dropped on the deck pane, remove it
+    if (draggedCard && dragSource === 'deck') {
+      await removeCard(draggedCard.id, false, 1);
+    }
+    setDraggedCard(null);
+    setDragSource(null);
+  };
+
   return (
-    <div ref={containerRef} style={{ display: 'flex', height: '100%', width: '100%' }}>
+    <div
+      ref={containerRef}
+      style={{ display: 'flex', height: '100%', width: '100%', overflow: 'hidden' }}
+      onDragEnd={handleDragEnd}
+    >
       {/* Left Column */}
-      <div style={{ width: `${leftWidth}%`, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <div style={{ width: `${leftWidth}%`, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
         {/* Top Pane - Current Deck */}
-        <div style={{ height: `${topHeight}%`, padding: 'var(--mantine-spacing-md)' }}>
-          <CurrentDeckPane />
+        <div style={{
+          height: `${topHeight}%`,
+          padding: 'var(--mantine-spacing-md)',
+          overflow: 'hidden',
+          boxSizing: 'border-box'
+        }}>
+          <CurrentDeckPane
+            mainDeck={mainDeck}
+            sideboard={sideboard}
+            format={format}
+            loading={loading}
+            onFormatChange={updateFormat}
+            onCardClick={handleCardClick}
+            onCardContextMenu={handleCardContextMenu}
+            onCardDragStart={handleDeckCardDragStart}
+            onDrop={handleDeckDrop}
+          />
         </div>
 
         {/* Vertical Resizer */}
@@ -73,14 +146,24 @@ export function ResizableGrid() {
             backgroundColor: 'var(--mantine-color-dark-4)',
             position: 'relative',
             zIndex: 10,
+            flexShrink: 0,
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--mantine-color-violet-6)'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--mantine-color-dark-4)'}
         />
 
         {/* Bottom Pane - Card Pool */}
-        <div style={{ height: `${100 - topHeight}%`, padding: 'var(--mantine-spacing-md)' }}>
-          <CardPoolPane />
+        <div style={{
+          height: `calc(${100 - topHeight}% - 4px)`,
+          padding: 'var(--mantine-spacing-md)',
+          overflow: 'hidden',
+          boxSizing: 'border-box'
+        }}>
+          <CardPoolPane
+            onCardDragStart={handleCardDragStart}
+            onCardClick={handleCardClick}
+            onCardContextMenu={handleCardContextMenu}
+          />
         </div>
       </div>
 
@@ -93,15 +176,29 @@ export function ResizableGrid() {
           backgroundColor: 'var(--mantine-color-dark-4)',
           position: 'relative',
           zIndex: 10,
+          flexShrink: 0,
         }}
         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--mantine-color-violet-6)'}
         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--mantine-color-dark-4)'}
       />
 
       {/* Right Column - AI Chat */}
-      <div style={{ width: `${100 - leftWidth}%`, padding: 'var(--mantine-spacing-md)' }}>
+      <div style={{
+        width: `calc(${100 - leftWidth}% - 4px)`,
+        padding: 'var(--mantine-spacing-md)',
+        overflow: 'hidden',
+        boxSizing: 'border-box'
+      }}>
         <AiChatPane />
       </div>
     </div>
+  );
+}
+
+export function ResizableGrid() {
+  return (
+    <DeckBuilderProvider>
+      <ResizableGridContent />
+    </DeckBuilderProvider>
   );
 }

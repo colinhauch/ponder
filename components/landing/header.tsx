@@ -1,22 +1,34 @@
-'use client';
-
 import Link from 'next/link';
 import { Container, Group, Anchor, Button } from '@mantine/core';
+import { createClient } from '@/lib/supabase/server';
 import classes from './header.module.css';
 
-export function Header() {
+export async function Header() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  const isAuthenticated = !!data.user;
+
   return (
     <header className={classes.header}>
       <Container size="xl">
         <Group justify="space-between" py="md">
-          <Anchor
-            component={Link}
-            href="/"
-            className={classes.logo}
-            underline="never"
-          >
-            ponder
-          </Anchor>
+          <Group gap="md">
+            <Anchor
+              component={Link}
+              href="/"
+              className={classes.logo}
+              underline="never"
+            >
+              ponder
+            </Anchor>
+            <Button
+              component={Link}
+              href={isAuthenticated ? '/protected/decks' : '/auth/login?next=/protected/decks'}
+              variant="default"
+            >
+              Decks
+            </Button>
+          </Group>
 
           <Group gap="sm">
             <Button

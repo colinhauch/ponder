@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Paper,
   TextInput,
@@ -19,10 +19,12 @@ import {
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
+import { BASE_PATH } from '@/lib/paths';
 import classes from './login-form.module.css';
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +51,17 @@ export function LoginForm() {
         password: values.password,
       });
       if (error) throw error;
-      router.push('/protected');
+
+      // Get redirect destination from query params, validate it's internal
+      // Note: 'next' param comes from middleware with basePath included,
+      // but router.push() auto-adds basePath, so we need to strip it first
+      const next = searchParams.get('next');
+      let redirectTo = '/protected'; // default
+      if (next && next.startsWith('/')) {
+        // Strip basePath if present (middleware adds it, router.push will re-add it)
+        redirectTo = next.startsWith(BASE_PATH) ? next.slice(BASE_PATH.length) : next;
+      }
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {

@@ -35,6 +35,10 @@ Ponder is an AI-assisted Magic: The Gathering deck builder built for players to 
 - **Scryfall API** - MTG card data source (no API key required)
 - **AI Providers** (planned) - Anthropic Claude, OpenAI
 
+### Developer Tools
+- **dotenv** - Environment variable management for scripts
+- **tsx** - TypeScript execution for Node.js scripts
+
 ## Architecture Patterns
 
 ### App Router Structure
@@ -52,7 +56,9 @@ app/
 - **SSR-first:** Use `@supabase/ssr` for server components
 - **Client access:** Create client in components only when needed
 - **Middleware:** Route protection via `middleware.ts`
-- **Environment:** `.env.local` for local dev, Wrangler secrets for production
+- **Environment:** `.env.local` for local dev, `.env.production` for production, Wrangler secrets for Cloudflare
+- **Local Development:** Use local Supabase (Docker) via `npm run supabase:start` - NEVER develop against production
+- **Database Migrations:** Version-controlled SQL files in `supabase/migrations/` applied chronologically
 
 ### Database Schema Key Tables
 - `cards` - MTG card data (imported from Scryfall)
@@ -84,16 +90,99 @@ npm run db:pull               # Pull remote schema to local
 npm run supabase:start        # Start local Supabase
 npm run supabase:stop         # Stop local Supabase
 
-# Scripts
-npm run import-set            # Import MTG set data from Scryfall
-npm run import-set-dry        # Dry run of set import
+# Card Data Import
+npm run import-set <setcode>  # Import MTG set data from Scryfall
+```
+
+### Card Import Script Usage
+The import script (`scripts/import-set/`) is a modular, class-based tool for importing MTG card data from Scryfall.
+
+**Basic Usage:**
+```bash
+npm run import-set tla                    # Import TLA set (~280 cards)
+npm run import-set dsk --save-sample      # Import and save 5 sample cards to ./data/
+npm run import-set blb --refresh          # Delete existing cards, then re-import
+npm run import-set mh3 --save-complete    # Import and save all cards to JSON
+```
+
+**Available Flags:**
+- `--include-tokens` - Include token cards (excluded by default)
+- `--include-variations` - Include alternate art variations (excluded by default)
+- `--refresh` - Delete existing cards from this set before importing
+- `--save-sample` - Save first 5 cards to JSON file in `./data/`
+- `--save-complete` - Save all cards to JSON file (warning: large file!)
+
+**Key Features:**
+- ✅ **Single art per card** - Excludes variations by default using `-is:variation`
+- ✅ **No tokens** - Excludes token cards by default using `-type:token`
+- ✅ **Clean re-imports** - `--refresh` flag deletes old data before importing
+- ✅ **Batch uploads** - 100 cards per batch for reliability
+- ✅ **Progress reporting** - Clear staged workflow with batch progress
+- ✅ **Service role key support** - Auto-detects and uses `SUPABASE_SERVICE_ROLE_KEY` for faster imports
+
+**Architecture:**
+```
+scripts/import-set/
+├── index.ts              # CLI entry point
+├── scryfallClient.ts     # Scryfall API client class
+├── supabaseClient.ts     # Supabase uploader class
+├── cardMapper.ts         # Data transformation functions
+└── types.ts              # TypeScript type definitions
 ```
 
 ### Common Development Tasks
 1. **After schema changes:** Run `npm run gen:db-types` to update TypeScript interfaces
 2. **Before committing:** Ensure `npm run build` succeeds
-3. **Testing imports:** Use `npm run import-set-dry` before full import
+3. **Testing card imports:** Start with small sets like `npm run import-set tla --save-sample`
 4. **Local Supabase:** Keep running with `npm run supabase:start` during dev
+
+### Database Migration Workflow
+
+**Local Development (Recommended):**
+```bash
+# 1. Start local Supabase (first time setup)
+npm run supabase:start  # Starts Docker containers on localhost:54321
+
+# 2. Create a new migration
+npx supabase migration new <description>  # Creates timestamped .sql file
+
+# 3. Edit the migration file in supabase/migrations/
+# Add your SQL (CREATE TABLE, ALTER TABLE, etc.)
+
+# 4. Apply migrations to local database
+npm run db:reset  # Resets and applies all migrations
+
+# 5. Generate TypeScript types
+npm run gen:db-types  # Updates lib/types/database.ts
+
+# 6. Test your changes locally
+npm run dev  # Verify everything works
+
+# 7. Deploy to production (automated via GitHub Actions on push to prod)
+git add supabase/migrations/*
+git commit -m "feat(db): description of change"
+git push origin prod  # GitHub Actions runs npm run db:push automatically
+```
+
+**Syncing from Dashboard Changes:**
+```bash
+# If you made changes in Supabase Dashboard (not recommended):
+npm run db:pull  # Creates migration file from remote schema
+npm run gen:db-types  # Update TypeScript types
+# Review and commit the generated migration
+```
+
+**Environment Setup:**
+- **`.env.local`** - Points to local Supabase (http://127.0.0.1:54321)
+- **`.env.production`** - Points to production Supabase (https://iqyckdnagcmyvbuqbjxn.supabase.co)
+- **Local anon key:** `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0` (default for all local instances)
+
+**Key Principles:**
+- Always develop against local Supabase, never production
+- Migrations are source of truth for schema
+- Test migrations locally before pushing
+- Use `npm run gen:db-types` after every schema change
+- Commit migration files to git
 
 ## Code Conventions
 
@@ -118,8 +207,14 @@ components/             # Reusable React components
 lib/                   # Utilities and services
   ├── supabase/        # Supabase client creation
   ├── types/           # TypeScript type definitions
-  └── services/        # External API integrations (Scryfall, etc.)
-scripts/               # Node scripts (data import, etc.)
+  └── services/        # External API integrations (if needed)
+scripts/               # Node scripts
+  └── import-set/      # Modular card import script
+      ├── index.ts              # CLI entry point
+      ├── scryfallClient.ts     # Scryfall API client
+      ├── supabaseClient.ts     # Database uploader
+      ├── cardMapper.ts         # Data transformation
+      └── types.ts              # Script-specific types
 supabase/              # Supabase config and migrations
 public/                # Static assets
 ```
@@ -198,10 +293,21 @@ public/                # Static assets
 - All protected routes enforce auth in middleware
 
 ### Data Import Strategy
-- Import full sets from Scryfall on-demand
-- Cache card images via Cloudflare CDN
-- User collections reference existing card data (foreign keys)
-- No duplicate card storage per user
+- **Import tool:** Modular script at `scripts/import-set/` - see "Card Import Script Usage" above
+- **Single art per card:** Uses `-is:variation` Scryfall filter to exclude alternate arts by default
+- **No tokens by default:** Uses `-type:token` filter to exclude token cards
+- **Card data storage:** Shared `cards` table (one copy per card, not per user)
+- **User collections:** Reference existing card data via foreign keys (no duplicate storage)
+- **Image caching:** Card images cached via Cloudflare CDN
+- **Environment detection:** Auto-detects local vs production based on `.env.local`
+- **Recommended test set:** TLA (Temporal Odyssey) - ~280 cards
+- **Seed workflow:** See `supabase/SEED_DATA.md` for detailed instructions
+
+**Quick Start:**
+```bash
+npm run db:reset                           # Reset local database
+npm run import-set tla --save-sample       # Import TLA and save sample
+```
 
 ### Performance Considerations
 - Lazy load card images in grid views
@@ -230,7 +336,20 @@ public/                # Static assets
 - Types in `lib/types/database.ts` are auto-generated
 - Run `npm run gen:db-types` after every schema change
 - Never manually edit database types file
+- Pulls from production database by default (project-id: iqyckdnagcmyvbuqbjxn)
 - Requires Supabase CLI authentication
+
+### Local vs Production Environments
+- **Local Development:** Docker-based Supabase on `http://127.0.0.1:54321`
+  - Start with `npm run supabase:start`
+  - Completely isolated from production
+  - Safe for testing destructive changes
+  - Uses default local anon key (same for all developers)
+- **Production:** Hosted at `https://iqyckdnagcmyvbuqbjxn.supabase.co`
+  - Live data, use with caution
+  - Migrations deployed automatically via GitHub Actions on push to `prod` branch
+  - Never develop directly against production
+- **Configuration:** `.env.local` points to local, `.env.production` points to production
 
 ## Security Notes
 

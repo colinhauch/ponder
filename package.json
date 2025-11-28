@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "echo '\n🎯 App is running at http://localhost:3000/ponder\n' && next dev --turbopack",
     "build": "next build",
     "worker:build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
@@ -14,8 +14,7 @@
     "db:pull": "npx supabase db pull",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
-    "import-set": "tsx scripts/import-set.ts",
-    "import-set-dry": "tsx scripts/import-set-dry.ts"
+    "import-set": "tsx scripts/import-set/index.ts"
   },
   "dependencies": {
     "@mantine/core": "^8.3.7",
@@ -29,7 +28,9 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@tabler/icons-react": "^3.35.0",
+    "@tanstack/react-virtual": "^3.13.12",
     "class-variance-authority": "^0.7.1",
+    "dotenv": "^16.4.7",
     "clsx": "^2.1.1",
     "lucide-react": "^0.511.0",
     "next": "latest",
