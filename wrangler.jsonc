@@ -4,12 +4,23 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-11-14",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "routes": [
+    {
+      "pattern": "colinhauch.com/ponder",
+      "zone_name": "colinhauch.com"
+    },
+    {
+      "pattern": "colinhauch.com/ponder/*",
+      "zone_name": "colinhauch.com"
+    }
+  ],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
   "vars": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://iqyckdnagcmyvbuqbjxn.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxeWNrZG5hZ2NteXZidXFianhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxNzUwMDgsImV4cCI6MjA3NDc1MTAwOH0.rC7PjaKqoPmGIKGW42z8r9YeiCwnVco82md1gfw-L1A"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxeWNrZG5hZ2NteXZidXFianhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxNzUwMDgsImV4cCI6MjA3NDc1MTAwOH0.rC7PjaKqoPmGIKGW42z8r9YeiCwnVco82md1gfw-L1A",
+    "NEXT_PUBLIC_APP_URL": "https://colinhauch.com/ponder"
   }
 }
