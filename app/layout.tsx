@@ -5,9 +5,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import "./globals.css";
 import '@mantine/core/styles.css';
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const defaultUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000/ponder";
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
