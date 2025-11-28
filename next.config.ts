@@ -4,9 +4,7 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  // NOTE: basePath NOT used - Cloudflare Workers routing handles the /ponder prefix
-  // The wrangler route "colinhauch.com/ponder/*" routes requests to this worker
-  // while serving the app at the root path internally
+  // App now runs at root domain ponder.colinhauch.com (no basePath needed)
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
