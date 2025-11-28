@@ -4,10 +4,7 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  // basePath IS needed because Cloudflare routes PRESERVE the /ponder path
-  // The route sends /ponder/* to the worker, and Next.js needs basePath to handle it
-  basePath: '/ponder',
-  assetPrefix: '/ponder',
+  // App now runs at root domain ponder.colinhauch.com (no basePath needed)
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
