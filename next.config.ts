@@ -4,9 +4,10 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  // NOTE: basePath NOT used - Cloudflare Workers routing handles the /ponder prefix
-  // The wrangler route "colinhauch.com/ponder/*" routes requests to this worker
-  // while serving the app at the root path internally
+  // basePath IS needed because Cloudflare routes PRESERVE the /ponder path
+  // The route sends /ponder/* to the worker, and Next.js needs basePath to handle it
+  basePath: '/ponder',
+  assetPrefix: '/ponder',
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
