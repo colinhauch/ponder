@@ -4,8 +4,9 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
-  basePath: '/ponder',
-  assetPrefix: '/ponder',
+  // NOTE: basePath NOT used - Cloudflare Workers routing handles the /ponder prefix
+  // The wrangler route "colinhauch.com/ponder/*" routes requests to this worker
+  // while serving the app at the root path internally
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },

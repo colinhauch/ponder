@@ -87,7 +87,6 @@ export default function NewDeckPage() {
       }
 
       // Redirect to the deck editor
-      // Note: router.push() automatically adds basePath, so don't use appPath()
       router.push(`/protected/deck-editor/${newDeck.id}`);
     } catch (err) {
       console.error("Unexpected error:", err);

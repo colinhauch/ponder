@@ -18,7 +18,6 @@ import {
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
-import { getAppUrl } from '@/lib/paths';
 import classes from './sign-up-form.module.css';
 
 export function SignUpForm() {
@@ -56,12 +55,10 @@ export function SignUpForm() {
         email: values.email,
         password: values.password,
         options: {
-          // getAppUrl is used for email links (needs full URL with basePath)
-          emailRedirectTo: getAppUrl(redirectTo),
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}${redirectTo}`,
         },
       });
       if (error) throw error;
-      // Note: router.push() automatically adds basePath, so don't use appPath()
       router.push('/auth/sign-up-success');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');

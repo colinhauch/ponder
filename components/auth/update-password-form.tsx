@@ -40,7 +40,6 @@ export function UpdatePasswordForm() {
     try {
       const { error } = await supabase.auth.updateUser({ password: values.password });
       if (error) throw error;
-      // Note: router.push() automatically adds basePath, so don't use appPath()
       router.push('/protected');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');

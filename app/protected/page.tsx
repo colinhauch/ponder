@@ -3,14 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import { Container, Title, Text, Stack, Button, SimpleGrid, Card } from "@mantine/core";
 import { IconCards, IconSparkles, IconBook } from "@tabler/icons-react";
 import Link from "next/link";
-import { appPath } from "@/lib/paths";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) {
-    redirect(appPath("/auth/login"));
+    redirect("/auth/login");
   }
 
   return (
