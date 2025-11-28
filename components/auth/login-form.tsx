@@ -19,7 +19,6 @@ import {
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
-import { BASE_PATH } from '@/lib/paths';
 import classes from './login-form.module.css';
 
 export function LoginForm() {
@@ -53,14 +52,8 @@ export function LoginForm() {
       if (error) throw error;
 
       // Get redirect destination from query params, validate it's internal
-      // Note: 'next' param comes from middleware with basePath included,
-      // but router.push() auto-adds basePath, so we need to strip it first
       const next = searchParams.get('next');
-      let redirectTo = '/protected'; // default
-      if (next && next.startsWith('/')) {
-        // Strip basePath if present (middleware adds it, router.push will re-add it)
-        redirectTo = next.startsWith(BASE_PATH) ? next.slice(BASE_PATH.length) : next;
-      }
+      const redirectTo = next && next.startsWith('/') ? next : '/protected';
       router.push(redirectTo);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred');

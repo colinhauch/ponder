@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { Container, Title, Text, Button, Stack, Alert } from "@mantine/core";
 import Link from "next/link";
 import { DeckList } from "@/components/decks/deck-list";
-import { appPath } from "@/lib/paths";
 
 export default async function DecksPage() {
   const supabase = await createClient();
@@ -14,7 +13,7 @@ export default async function DecksPage() {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect(appPath("/auth/login"));
+    redirect("/auth/login");
   }
 
   // Fetch user's decks from Supabase

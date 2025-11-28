@@ -16,7 +16,6 @@ import {
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconMailCheck } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
-import { getAppUrl } from '@/lib/paths';
 import classes from './forgot-password-form.module.css';
 
 export function ForgotPasswordForm() {
@@ -41,7 +40,7 @@ export function ForgotPasswordForm() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-        redirectTo: getAppUrl('/auth/update-password'),
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/update-password`,
       });
       if (error) throw error;
       setSuccess(true);
