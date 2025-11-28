@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "echo '\n🎯 App is running at http://localhost:3000/ponder\n' && next dev --turbopack",
     "build": "next build",
     "worker:build": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
